@@ -1,0 +1,96 @@
+---
+- block:
+  - name: Check if Day of Defeat dedicated server is installed
+    stat:
+      path: "/home/{{ steamcmd_user }}/.steam/steamapps/common/Day of Defeat Source Dedicated Server"
+    register: __dodsource_exists
+
+  - name: Ensure Day of Defeat dedicated server is up to date
+    command: "{{ steamcmd_bin }} +login anonymous +app_update 232290 +quit"
+    register: __dodsource_update
+    changed_when: "'already up to date' not in __dodsource_update.stdout"
+    when: __dodsource_exists.stat.exists == False
+  become_user: "{{ steamcmd_user }}"
+
+- name: Create a symlink to steam home directory
+  file:
+    src: "/home/{{ steamcmd_user }}/.steam/steamapps/common/Day of Defeat Source Dedicated Server"
+    dest: "/home/{{ steamcmd_user }}/dod-source"
+    owner: "{{ steamcmd_user }}"
+    group: "{{ steamcmd_user }}"
+    state: link
+
+- name: Ensure motd.txt is installed
+  template:
+    dest: "/home/{{ steamcmd_user }}/dod-source/dod/cfg/motd.txt"
+    src: motd.txt.j2
+    owner: "{{ steamcmd_user }}"
+    group: "{{ steamcmd_user }}"
+  notify: Restart dod-source
+
+- name: Ensure mapcycle.txt is installed
+  template:
+    dest: "/home/{{ steamcmd_user }}/dod-source/dod/cfg/mapcycle.txt"
+    src: mapcycle.txt.j2
+    owner: "{{ steamcmd_user }}"
+    group: "{{ steamcmd_user }}"
+  notify: Restart dod-source
+
+- name: Ensure server.cfg is installed
+  template:
+    dest: "/home/{{ steamcmd_user }}/dod-source/dod/cfg/server.cfg"
+    src: server.cfg.j2
+    owner: "{{ steamcmd_user }}"
+    group: "{{ steamcmd_user }}"
+  notify: Restart dod-source
+
+- block:
+  - name: Ensure extra mapcycle files are installed
+    template:
+      dest: "/home/{{ steamcmd_user }}/dod-source/dod/cfg/mapcycle_{{ item.name }}.txt"
+      src: extra_mapcycle.txt.j2
+      owner: "{{ steamcmd_user }}"
+      group: "{{ steamcmd_user }}"
+    loop: "{{ dod_source_extra_mapcycles }}"
+    loop_control:
+      label: "{{ item.name }}"
+    when: 'item.state is not defined or item.state != "absent"'
+
+  - name: Ensure unwanted mapcycle files are deleted
+    file:
+      path: "/home/{{ steamcmd_user }}/dod-source/dod/cfg/mapcycle_{{ item.name }}.txt"
+      state: absent
+    loop: "{{ dod_source_extra_mapcycles }}"
+    loop_control:
+      label: "{{ item.name }}"
+    when: 'item.state is defined and item.state == "absent"'
+  when: 'dod_source_extra_mapcycles != []'
+
+- block:
+  - name: Ensure extra maps are installed
+    copy:
+      src: "{{ item }}"
+      dest: "/home/{{ steamcmd_user }}/dod-source/dod/maps/"
+      owner: "{{ steamcmd_user }}"
+      group: "{{ steamcmd_user }}"
+    with_fileglob:
+      - "{{ dod_source_extra_maps_directory }}/*.bsp"
+  when: 'dod_source_extra_maps_directory != ""'
+
+- name: Ensure systemd unit is installed
+  template:
+    src: dod-source.service.j2
+    dest: /etc/systemd/system/dod-source.service
+  notify: Reload systemd
+
+- meta: flush_handlers
+
+- name: Ensure dod-source is enabled at boot
+  service:
+    name: dod-source
+    enabled: yes
+
+- name: Ensure dod-source is started
+  service:
+    name: dod-source
+    state: started

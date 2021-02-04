@@ -1,0 +1,19 @@
+---
+steamcmd_user: steam
+steamcmd_bin: /usr/games/steamcmd
+dod_source_motd: |
+  <html>
+  <head>
+    <title>Day of Defeat: Source</title>
+  </head>
+  <body scroll="no">
+    <pre>Welcome.</pre>
+  </body>
+  </html>
+dod_source_mapcycle: ""
+dod_source_server_cfg: ""
+dod_source_port: 27015
+dod_source_ip: 0.0.0.0
+
+dod_source_extra_mapcycles: []
+dod_source_extra_maps_directory: ""

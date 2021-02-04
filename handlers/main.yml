@@ -1,0 +1,10 @@
+---
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Restart dod-source
+  service:
+    name: dod-source
+    state: restarted
+  listen: "Restart source games"

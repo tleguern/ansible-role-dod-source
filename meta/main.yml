@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  role_name: dod-source
+  author: Tristan Le Guern
+  description: Configure a Day of Defeat Source server
+  company: Gwern
+  license: ISC
+  min_ansible_version: 2.4
+  platforms:
+    - name: Ubuntu
+    - name: Debian
+  galaxy_tags:
+    - dod
+    - day-of-defeat
+dependencies: []

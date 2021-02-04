@@ -1,0 +1,12 @@
+[Unit]
+Description=Day of Defeat Source Dedicated Server
+Documentation=https://developer.valvesoftware.com/wiki/Source_Dedicated_Server
+After=syslog.target network.target
+
+[Service]
+User={{ steamcmd_user }}
+ExecStart=/home/{{ steamcmd_user }}/dod-source/srcds_run -console -game dod -secure -usercon +map dod_anzio -port {{ dod_source_port }} +ip {{ dod_source_ip }}
+KillMode=control-group
+
+[Install]
+WantedBy=default.target
