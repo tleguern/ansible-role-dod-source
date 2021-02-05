@@ -25,7 +25,7 @@ An ansible role dedicated to the installation of SteamCMD such as [ansible-steam
 | `dod_source_port` | Network port | `27015` |
 | `dod_source_ip` | IP address to listen on | `0.0.0.0` |
 | `dod_source_extra_mapcycles` | Configuration of extra mapcycle | See below |
-| `dod_source_extra_maps_directory` | Directory containing extra bsp and nav files | `""` |
+| `dod_source_extra_maps_directory` | Directory containing extra maps, resource and materials sub folders | `""` |
 
 ### `dod_source_motd`
 
@@ -111,7 +111,7 @@ The `acl` package should be installed on the server.
 ```yaml
 - hosts: game
   vars:
-    dod_source_extra_maps_directory: "files/dod-source/maps"
+    dod_source_extra_maps_directory: "files/dod-source"
     dod_source_server_cfg: |
       hostname "My Server"
       sv_password password

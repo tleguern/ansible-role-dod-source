@@ -68,13 +68,13 @@
 
 - block:
   - name: Ensure extra maps are installed
-    copy:
-      src: "{{ item }}"
-      dest: "/home/{{ steamcmd_user }}/dod-source/dod/maps/"
-      owner: "{{ steamcmd_user }}"
-      group: "{{ steamcmd_user }}"
-    with_fileglob:
-      - "{{ dod_source_extra_maps_directory }}/*.bsp"
+    synchronize:
+      src: "{{ dod_source_extra_maps_directory }}/{{ item }}"
+      dest: "/home/{{ steamcmd_user }}/dod-source/dod/custom/ansible"
+    loop:
+      - maps
+      - materials
+      - resource
   when: 'dod_source_extra_maps_directory != ""'
 
 - name: Ensure systemd unit is installed
