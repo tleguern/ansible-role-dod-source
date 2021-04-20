@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  role_name: dod-source
+  role_name: dod_source
   author: Tristan Le Guern
   description: Configure a Day of Defeat Source server
   company: Gwern
