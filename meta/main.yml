@@ -11,5 +11,5 @@ galaxy_info:
     - name: Debian
   galaxy_tags:
     - dod
-    - day-of-defeat
+    - dayofdefeat
 dependencies: []

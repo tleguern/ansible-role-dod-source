@@ -9,7 +9,7 @@
       command: "{{ steamcmd_bin }} +login anonymous +app_update 232290 +quit"
       register: __dodsource_update
       changed_when: "'already up to date' not in __dodsource_update.stdout"
-      when: __dodsource_exists.stat.exists == False
+      when: not __dodsource_exists.stat.exists
   become_user: "{{ steamcmd_user }}"
 
 - name: Create a symlink to steam home directory
@@ -83,7 +83,8 @@
     dest: /etc/systemd/system/dod-source.service
   notify: Reload systemd
 
-- meta: flush_handlers
+- name: Flush handlers
+  meta: flush_handlers
 
 - name: Ensure dod-source is enabled at boot
   service:
