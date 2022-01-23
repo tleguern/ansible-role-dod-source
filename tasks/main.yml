@@ -1,8 +1,12 @@
 ---
+- name: Check if steam_home is defined.
+  assert:
+    that: steam_home is defined
+
 - block:
     - name: Check if Day of Defeat dedicated server is installed
       stat:
-        path: "/home/{{ steamcmd_user }}/.steam/steamapps/common/Day of Defeat Source Dedicated Server"
+        path: "{{ steam_home }}/steamapps/common/Day of Defeat Source Dedicated Server"
       register: __dodsource_exists
 
     - name: Ensure Day of Defeat dedicated server is up to date
@@ -14,7 +18,7 @@
 
 - name: Create a symlink to steam home directory
   file:
-    src: "/home/{{ steamcmd_user }}/.steam/steamapps/common/Day of Defeat Source Dedicated Server"
+    src: "{{ steam_home }}/steamapps/common/Day of Defeat Source Dedicated Server"
     dest: "/home/{{ steamcmd_user }}/dod-source"
     owner: "{{ steamcmd_user }}"
     group: "{{ steamcmd_user }}"
